@@ -29,8 +29,8 @@ func main() {
 	}
 
 	app.Post("/login", func(ctx *fiber.Ctx) error {
-		userName := ctx.Params("username", "")
-		password := ctx.Params("password", "")
+		userName := ctx.Get("username", "")
+		password := ctx.Get("password", "")
 
 		if userName == "" || password == "" {
 			return ctx.Status(403).SendString("username or password not provided.")
