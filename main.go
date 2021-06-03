@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
+	"time"
+
 	"github.com/alexedwards/argon2id"
 	"github.com/bluemediaapp/models"
 	"github.com/bwmarrin/snowflake"
@@ -9,9 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"os"
-	"time"
 )
 
 var (
@@ -33,7 +34,7 @@ func main() {
 	log.Print(snowflake.Epoch)
 	snowNode, _ := snowflake.NewNode(0)
 
-	app.Post("/login", func(ctx *fiber.Ctx) error {
+	app.Get("/login", func(ctx *fiber.Ctx) error {
 		userName := ctx.Get("username", "")
 		password := ctx.Get("password", "")
 
@@ -60,7 +61,7 @@ func main() {
 		}
 		return ctx.SendString(token)
 	})
-	app.Post("/register", func(ctx *fiber.Ctx) error {
+	app.Get("/register", func(ctx *fiber.Ctx) error {
 		userName := ctx.Get("username", "")
 		password := ctx.Get("password", "")
 		userId := snowNode.Generate().Int64()
@@ -128,7 +129,7 @@ func initDb() {
 
 // Db utils
 func getUserLogin(userName string) (models.UserLogin, error) {
-	query := bson.D{{"_id", userName}}
+	query := bson.D{{"username", userName}}
 	rawVideo := userLoginCollection.FindOne(mctx, query)
 	var userLogin models.UserLogin
 	err := rawVideo.Decode(&userLogin)

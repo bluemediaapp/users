@@ -1,1 +1,2 @@
-go run config.go main.go
+go build -o out
+./out
